@@ -35,4 +35,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  ::-webkit-scrollbar {
+    @apply w-0;
+  }
 }
