@@ -1,4 +1,4 @@
-import { FileVideo2, Github, Upload, Wand } from "lucide-react";
+import { Github, Wand } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { Separator } from "./components/ui/separator";
 import { Textarea } from "./components/ui/textarea";
@@ -11,10 +11,38 @@ import {
   SelectItem,
 } from "./components/ui/select";
 import { Slider } from "./components/ui/slider";
+import { VideoInputForm } from "./components/video-input-form";
+import { PromptSelect } from "./components/prompt-select";
+import { Toaster } from "react-hot-toast";
+import { useState } from "react";
+import { useCompletion } from "ai/react";
 
 export function App() {
+  const [temperature, setTemperature] = useState(0.5);
+
+  const [videoId, setVideoId] = useState<string | null>(null);
+
+  const {
+    input,
+    setInput,
+    handleInputChange,
+    handleSubmit,
+    completion,
+    isLoading,
+  } = useCompletion({
+    api: "http://localhost:3333/ai/complete",
+    body: {
+      videoId,
+      temperature,
+    },
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
   return (
     <div className="min-h-screen flex flex-col">
+      <Toaster />
       <header className="flex items-center justify-between px-6 py-3 border-b select-none">
         <h1 className="text-xl font-bold duration-300 hover:scale-95">
           upload.ai
@@ -41,11 +69,14 @@ export function App() {
             <Textarea
               placeholder="Inclua o prompt para a IA..."
               className="resize-none leading-relaxed p-4"
+              value={input}
+              onChange={handleInputChange}
             />
             <Textarea
               placeholder="Resultado gerado pela IA..."
               readOnly
               className="resize-none leading-relaxed p-4"
+              value={completion}
             />
           </div>
           <p className="text-sm text-muted-foreground">
@@ -57,55 +88,14 @@ export function App() {
           </p>
         </div>
         <aside className="w-80 space-y-6">
-          <form className="space-y-6">
-            <label
-              htmlFor="video"
-              className="flex flex-col gap-2 items-center justify-center border w-full rounded-md aspect-video cursor-pointer border-dashed text-sm text-muted-foreground transition-all hover:text-white hover:bg-muted hover:border-solid"
-            >
-              <FileVideo2 className="h-4 w-4" />
-              Selecione um vídeo
-            </label>
-            <input
-              type="file"
-              name="video"
-              id="video"
-              accept="video/mp4"
-              className="sr-only"
-            />
-
-            <Separator />
-
-            <div className="space-y-2">
-              <Label htmlFor="transcription_prompt">
-                Prompt de transcrição
-              </Label>
-              <Textarea
-                id="transcription_prompt"
-                className="h-20 resize-none leading-relaxed"
-                placeholder="Insira palavras-chave mencionadas no vídeo separadas por vírgula"
-              />
-            </div>
-
-            <Button type="submit" className="w-full">
-              Carregar vídeo
-              <Upload className="h-4 w-4 ml-2" />
-            </Button>
-          </form>
+          <VideoInputForm onVideoUploaded={setVideoId} />
 
           <Separator />
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <Label>Tipo de Prompt</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione um prompt..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yt_title">Título do YouTube</SelectItem>
-                  <SelectItem value="video_desc">Descrição de vídeo</SelectItem>
-                </SelectContent>
-              </Select>
+              <PromptSelect onPromptSelect={setInput} />
             </div>
 
             <div className="space-y-2">
@@ -128,7 +118,13 @@ export function App() {
             <div className="space-y-4">
               <Label>Temperatura</Label>
 
-              <Slider min={0} max={1} step={0.1} defaultValue={[0.5]} />
+              <Slider
+                min={0}
+                max={1}
+                step={0.1}
+                value={[temperature]}
+                onValueChange={(value) => setTemperature(value[0])}
+              />
 
               <span className="block text-muted-foreground text-xs italic text-end select-none leading-relaxed">
                 Valores maiores tendem a deixar o resultado mais{" "}
@@ -142,7 +138,7 @@ export function App() {
 
             <Separator className="w-1/2 m-auto" />
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isLoading}>
               Executar
               <Wand className="h-4 w-4 ml-2" />
             </Button>

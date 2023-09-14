@@ -9,7 +9,7 @@ const app = fastify();
 const port = 3333;
 
 app.register(fastifyCors, {
-  origin: "http://localhost:5173",
+  origin: "*",
 });
 
 app.register(getAllPromptsRoute);
