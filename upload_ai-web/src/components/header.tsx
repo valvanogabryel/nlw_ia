@@ -10,7 +10,7 @@ export function Header() {
       </h1>
 
       <div className="flex items-center space-x-6">
-        <span className="hidden sm:text-sm text-muted-foreground">
+        <span className="hidden sm:inline-block sm:text-sm text-muted-foreground">
           Desenvolvido no NLW da Rocketseat
         </span>
         <Separator orientation="vertical" className="h-6" aria-hidden />

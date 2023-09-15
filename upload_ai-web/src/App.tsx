@@ -48,6 +48,9 @@ export function App() {
       <Header />
 
       <Container>
+        <span className="text-xs text-end sm:hidden text-muted">
+          Desenvolvido no NLW da Rocketseat
+        </span>
         <div className="flex flex-col flex-1 gap-4">
           <div className="grid grid-rows-2 gap-4 flex-1">
             <Textarea
