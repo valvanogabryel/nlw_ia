@@ -1,4 +1,4 @@
-import { Github, Wand } from "lucide-react";
+import { Wand } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { Separator } from "./components/ui/separator";
 import { Textarea } from "./components/ui/textarea";
@@ -16,6 +16,8 @@ import { PromptSelect } from "./components/prompt-select";
 import { Toaster } from "react-hot-toast";
 import { useState } from "react";
 import { useCompletion } from "ai/react";
+import { Header } from "./components/header";
+import { Container } from "./components/container";
 
 export function App() {
   const [temperature, setTemperature] = useState(0.5);
@@ -43,43 +45,25 @@ export function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Toaster />
-      <header className="flex items-center justify-between px-6 py-3 border-b select-none">
-        <h1 className="text-xl font-bold duration-300 hover:scale-95">
-          upload.ai
-        </h1>
+      <Header />
 
-        <div className="flex items-center space-x-6">
-          <span className="text-sm text-muted-foreground">
-            Desenvolvido no NLW da Rocketseat
-          </span>
-          <Separator orientation="vertical" className="h-6" aria-hidden />
-
-          <a href="https://github.com/valvanogabryel" target="_blank">
-            <Button variant={"destructive"}>
-              <Github className="w-4 h-4 mr-2" />
-              Github
-            </Button>
-          </a>
-        </div>
-      </header>
-
-      <main className="flex gap-6 flex-1 p-6">
+      <Container>
         <div className="flex flex-col flex-1 gap-4">
           <div className="grid grid-rows-2 gap-4 flex-1">
             <Textarea
               placeholder="Inclua o prompt para a IA..."
-              className="resize-none leading-relaxed p-4"
+              className="resize-none leading-relaxed p-4 placeholder:text-xs sm:placeholder:text-sm md:placeholder:text-base"
               value={input}
               onChange={handleInputChange}
             />
             <Textarea
               placeholder="Resultado gerado pela IA..."
               readOnly
-              className="resize-none leading-relaxed p-4"
+              className="resize-none leading-relaxed p-4 placeholder:text-xs sm:placeholder:text-sm md:placeholder:text-base"
               value={completion}
             />
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground">
             Lembre-se: você pode utilizar a variável{" "}
             <code className="text-red-400 duration-500 hover:text-red-500">
               {"{transcription}"}
@@ -87,19 +71,22 @@ export function App() {
             para adicionar o conteúdo da transcrição do vídeo selecionado.
           </p>
         </div>
-        <aside className="w-80 space-y-6">
+
+        <Separator className="sm:hidden" />
+
+        <aside className="m-auto sm:w-80 space-y-6">
           <VideoInputForm onVideoUploaded={setVideoId} />
 
           <Separator />
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <Label>Tipo de Prompt</Label>
+              <Label className="text-sm md:text-base">Tipo de Prompt</Label>
               <PromptSelect onPromptSelect={setInput} />
             </div>
 
             <div className="space-y-2">
-              <Label>Modelo</Label>
+              <Label className="text-sm md:text-base">Modelo</Label>
               <Select defaultValue="gpt3.5" disabled>
                 <SelectTrigger>
                   <SelectValue />
@@ -116,7 +103,7 @@ export function App() {
             <Separator className="w-1/2 m-auto" />
 
             <div className="space-y-4">
-              <Label>Temperatura</Label>
+              <Label className="text-sm md:text-base">Temperatura</Label>
 
               <Slider
                 min={0}
@@ -144,7 +131,7 @@ export function App() {
             </Button>
           </form>
         </aside>
-      </main>
+      </Container>
     </div>
   );
 }
